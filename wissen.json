@@ -1,0 +1,371 @@
+[
+  {
+    "device": "Alle Produktgruppen",
+    "items": [
+      {
+        "symptom": "Gerät tot",
+        "causes": [
+          "Stromkabel steckt nicht richtig im Gerät",
+          "Wandsteckdose stromlos",
+          "Zwischengeschalteter 3‑fach Verteiler setzt aus"
+        ],
+        "tips": [
+          "Festen Sitz des Kabels prüfen",
+          "Wohnungssicherung prüfen",
+          "Anderes Gerät an Steckdose anstecken und testen",
+          "Bei 3‑fach Verteiler aus- und wieder einstecken",
+          "Gerät woanders anstecken"
+        ],
+        "info": "Speziell billige 3‑fach Verteiler haben zu weiche Kontakte und setzen aus"
+      }
+    ]
+  },
+  {
+    "device": "Geschirrspüler",
+    "items": [
+      {
+        "symptom": "pumpt nicht ab",
+        "causes": [
+          "Fremdkörper in der Pumpe",
+          "Ablauf verstopft oder blockiert"
+        ],
+        "tips": [
+          "Siebe kontrollieren und reinigen",
+          "Ablaufschlauch bei Abwasch‑Syphon (Kanaleinlass) abschrauben (ACHTUNG! Druck!) und auf Verstopfung prüfen",
+          "Ablaufschlauch auf Knicke prüfen"
+        ],
+        "info": "Speise- und Fettreste können mit der Zeit den Schlauch „zuwachsen“"
+      },
+      {
+        "symptom": "wäscht nicht sauber",
+        "causes": [
+          "Falsche Dosierung",
+          "Falsche Einstellung"
+        ],
+        "tips": [
+          "Korrekte Dosierung bzw. Wasserhärte gemäß Bedienungsanleitung einhalten"
+        ]
+      }
+    ]
+  },
+  {
+    "device": "Herd",
+    "items": [
+      {
+        "symptom": "Kochplatte bzw. Rohr geht nicht",
+        "causes": [
+          "Uhr nicht eingestellt"
+        ],
+        "tips": [
+          "Uhr einstellen"
+        ],
+        "info": "Bei manchen Herstellern eine Eigenheit"
+      }
+    ]
+  },
+  {
+    "device": "Kaffeemaschine",
+    "items": [
+      {
+        "symptom": "es kommt kein Wasser",
+        "causes": [
+          "Verkalkt",
+          "Verstopft"
+        ],
+        "tips": [
+          "Entkalkungs- oder Reinigungsprogramm laufen lassen",
+          "Auslässe mit Pfeifenreiniger o.ä. reinigen"
+        ],
+        "info": "Getrocknete Reste verkleben mit der Zeit"
+      },
+      {
+        "symptom": "Milchschäumer geht nicht",
+        "causes": [
+          "Verstopft"
+        ],
+        "tips": [
+          "Öffnung mit Pfeifenreiniger o.ä. reinigen"
+        ],
+        "info": "Milch verklebt mit der Zeit"
+      }
+    ]
+  },
+  {
+    "device": "Kühlschrank",
+    "items": [
+      {
+        "symptom": "Wasser steht im Gerät",
+        "causes": [
+          "Abtaurinne hinten im Gerät innen verstopft"
+        ],
+        "tips": [
+          "Abflussöffnung mit Pfeifenreiniger o.ä. reinigen"
+        ],
+        "info": "Passiert durch Verunreinigungen an der permanenten Abtauvorrichtung"
+      }
+    ]
+  },
+  {
+    "device": "Kühlschrank-Kombi",
+    "items": [
+      {
+        "symptom": "kühlt nicht",
+        "causes": [
+          "Umgebungstemperatur zu kühl"
+        ],
+        "tips": [
+          "Raum muss über 15 °C haben"
+        ],
+        "info": "Einkompressor‑Kombigeräte benötigen Mindest‑Raumtemperatur"
+      }
+    ]
+  },
+  {
+    "device": "TV",
+    "items": [
+      {
+        "symptom": "Bild farbfleckig",
+        "causes": [
+          "Clouding"
+        ],
+        "tips": [
+          "Auf gute Belüftung achten"
+        ]
+      },
+      {
+        "symptom": "Bild hat Farbstich",
+        "causes": [
+          "HDMI‑ oder Scartkabel vom externen Zuspielgerät defekt",
+          "Externes Gerät defekt"
+        ],
+        "tips": [
+          "Anderes Kabel/Gerät an anderem Eingang oder anderem TV ausprobieren"
+        ],
+        "info": "TV kann nur das wiedergeben, was er angeboten bekommt"
+      },
+      {
+        "symptom": "Bild und/oder Ton setzt aus",
+        "causes": [
+          "Empfangsproblem",
+          "Sat‑/Antenne‑/Kabelanschluss defekt"
+        ],
+        "tips": [
+          "Fehlerquelle finden: Gerät an anderem Platz ausprobieren oder anderes Gerät am Platz testen"
+        ],
+        "info": "TV kann nur das wiedergeben, was er angeboten bekommt"
+      },
+      {
+        "symptom": "Bild verpixelt",
+        "causes": [
+          "Empfangsproblem",
+          "Sat‑/Antenne‑/Kabelanschluss defekt"
+        ],
+        "tips": [
+          "Fehlerquelle finden: Gerät an anderem Platz ausprobieren oder anderes Gerät am Platz testen"
+        ],
+        "info": "TV kann nur das wiedergeben, was er angeboten bekommt"
+      },
+      {
+        "symptom": "Fernbedienung reagiert nicht",
+        "causes": [
+          "Batterien leer",
+          "Geber defekt"
+        ],
+        "tips": [
+          "Neue Batterien einlegen",
+          "Geber im Markt prüfen und ggf. tauschen lassen"
+        ],
+        "info": "Für Fernbedienungs‑Geber kommt kein LKW"
+      },
+      {
+        "symptom": "kein Bild",
+        "causes": [
+          "HDMI‑ oder Scartkabel defekt",
+          "Externes Gerät defekt",
+          "ORF‑Karte registriert und aktiv?"
+        ],
+        "tips": [
+          "Anderes Kabel/Gerät an anderem Eingang oder anderem TV ausprobieren"
+        ],
+        "info": "TV kann nur das wiedergeben, was er angeboten bekommt"
+      },
+      {
+        "symptom": "kein Ton",
+        "causes": [
+          "HDMI‑ oder Scartkabel defekt",
+          "Externes Gerät defekt",
+          "Lautstärke vom externen Gerät aufgedreht?"
+        ],
+        "tips": [
+          "Anderes Kabel/Gerät an anderem Eingang oder anderem TV ausprobieren"
+        ],
+        "info": "TV kann nur das wiedergeben, was er angeboten bekommt"
+      },
+      {
+        "symptom": "schaltet selbst ein/um/aus",
+        "causes": [
+          "Fernbedienung spinnt",
+          "Software spinnt",
+          "Automatischer Timer aktiviert"
+        ],
+        "tips": [
+          "Fernbedienung ohne Batterien in anderem Raum testen",
+          "TV vom Netz trennen (Kaltreset)",
+          "Automatisches Nacht‑Update deaktivieren",
+          "Bei Samsung SMART TV Hotline kontaktieren"
+        ],
+        "info": "Samsung kann sich ins Gerät einwählen und Fehler feststellen"
+      },
+      {
+        "symptom": "Bild wird dunkler",
+        "causes": [
+          "Ökomodus aktiviert"
+        ],
+        "tips": [
+          "Ökomodus gemäß Bedienungsanleitung ausschalten"
+        ],
+        "info": "Oft ab Werk eingestellt"
+      }
+    ]
+  },
+  {
+    "device": "Waschmaschine",
+    "items": [
+      {
+        "symptom": "geht nicht auf (Tür)",
+        "causes": [
+          "Gerät pumpt nicht ab"
+        ],
+        "tips": [
+          "Siehe „pumpt nicht ab“; Gerät öffnet erst, wenn Wasser draußen (Sensor)"
+        ]
+      },
+      {
+        "symptom": "geht über beim Wassernehmen",
+        "causes": [
+          "Waschmittellade verstopft"
+        ],
+        "tips": [
+          "Waschmittellade gemäß Bedienungsanleitung rausnehmen und reinigen"
+        ],
+        "info": "Rückstände können mit der Zeit „zuwachsen“"
+      },
+      {
+        "symptom": "hüpft herum beim Schleudern",
+        "causes": [
+          "Gerät steht nicht richtig",
+          "Transportsicherungen nicht entfernt",
+          "Wäsche zu groß oder zu wenig"
+        ],
+        "tips": [
+          "Gerät einjustieren gemäß Aufstellanleitung",
+          "Transportsicherungen entfernen",
+          "Mehr Wäsche einlegen",
+          "Große Teile separat waschen"
+        ],
+        "info": "Unwuchtregelung kann bei zu großen Teilen oder wenig Wäsche nicht ausgleichen; Transportsicherungen blockieren Trommelaufhängung"
+      },
+      {
+        "symptom": "laut",
+        "causes": [
+          "Gerät steht nicht richtig",
+          "Fremdkörper im Gerät"
+        ],
+        "tips": [
+          "Gerät einjustieren gemäß Aufstellanleitung",
+          "Flusensieb kontrollieren"
+        ]
+      },
+      {
+        "symptom": "pumpt nicht ab",
+        "causes": [
+          "Fremdkörper im Flusensieb (Fremdkörperfalle)",
+          "Ablauf verstopft oder blockiert"
+        ],
+        "tips": [
+          "Flusensieb kontrollieren und reinigen (ACHTUNG: Restwasser auffangen!)",
+          "Ablaufschlauch auf Knicke prüfen"
+        ],
+        "info": "Flusen, Knöpfe, Münzen, Schrauben, Vorhanghaken, BH‑Bügel – alles schon vorgekommen"
+      },
+      {
+        "symptom": "Schlüsselsymbol",
+        "causes": [
+          "Kindersicherung aktiv"
+        ],
+        "tips": [
+          "Kindersicherung gemäß Bedienungsanleitung deaktivieren"
+        ]
+      },
+      {
+        "symptom": "stinkt",
+        "causes": [
+          "Bakterien im Gerät"
+        ],
+        "tips": [
+          "Kochwaschgang regelmäßig ausführen"
+        ],
+        "info": "Bakterien werden erst bei Temperaturen über 70 °C abgetötet"
+      },
+      {
+        "symptom": "wäscht lange",
+        "causes": [
+          "Möglicherweise normal"
+        ],
+        "tips": [
+          "Keine – moderne Maschinen sparen Energie (kühler, dafür länger)"
+        ]
+      },
+      {
+        "symptom": "wäscht nicht sauber",
+        "causes": [
+          "Falsche Dosierung"
+        ],
+        "tips": [
+          "Korrekte Dosierung einhalten",
+          "Anderes Mittel probieren"
+        ]
+      }
+    ]
+  },
+  {
+    "device": "Waschmaschine/Spüler",
+    "items": [
+      {
+        "symptom": "nimmt kein Wasser",
+        "causes": [
+          "Wasserhahn geschlossen/defekt"
+        ],
+        "tips": [
+          "Wasserhahn prüfen"
+        ],
+        "info": "Wasserhähne können auch defekt werden (Kalk)"
+      },
+      {
+        "symptom": "rinnt",
+        "causes": [
+          "Anschluss/Ablauf undicht"
+        ],
+        "tips": [
+          "Befestigungen der Schläuche prüfen"
+        ],
+        "info": "Dichtungen können mit der Zeit undicht werden"
+      }
+    ]
+  },
+  {
+    "device": "Trockner",
+    "items": [
+      {
+        "symptom": "zeigt „Behälter voll“",
+        "causes": [
+          "Flusensiebe verstopft"
+        ],
+        "tips": [
+          "Siebe gemäß Bedienungsanleitung reinigen"
+        ],
+        "info": "Flusenabrieb entsteht beim Trocknen"
+      }
+    ]
+  }
+]
