@@ -7,7 +7,11 @@
 <style>
   :root{--bg:#f7f7f8;--card:#fff;--border:#e5e7eb;--text:#0a0a0a;--muted:#6b7280;--accent:#111}
   *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
+body {
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  background:#f59e0b;   /* kräftiges Orange */
+  color:var(--text)}
   header{position:sticky;top:0;background:#ffffffcc;backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid var(--border)}
   .wrap{max-width:1040px;margin:0 auto;padding:14px 16px;display:flex;gap:10px;align-items:center}
   h1{font-size:18px;margin:0;font-weight:600}
@@ -26,7 +30,15 @@
   .muted{color:var(--muted);font-size:14px}
   .result h3{margin:.25rem 0 .5rem;font-size:16px}
   .result ul{margin:.25rem 0 .9rem;padding-left:1.15rem}
-  footer{max-width:1040px;margin:0 auto;padding:24px 16px 40px;color:var(--muted);font-size:12px}
+footer {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+  color: #ffffff;  /* weiße Schrift */
+  font-size: 14px; /* minimal größer für bessere Lesbarkeit */
+  text-align: center; /* mittig ausgerichtet */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3); /* leichter Schatten */
+}
 </style>
 </head>
 <body>
@@ -52,8 +64,8 @@
   damit Sie Ihr Gerät schnell wieder zum Laufen bringen.  
   In mehr als der Hälfte aller Fälle können wir unseren Kundinnen und Kunden so bereits direkt weiterhelfen – 
   ganz ohne Technikerbesuch.  
-  Falls das Problem dennoch bestehen bleibt: Bitte halten Sie bei einem Anruf Ihre <em>Vertragsnummer</em> 
-  und – sofern vorhanden – die <em>Seriennummer</em> bereit.
+  Falls das Problem dennoch bestehen bleibt halten Sie bitte bei einem Anruf Ihre <em>Vertragsnummer</em> 
+  und – sofern vorhanden – Ihre <em>Seriennummer</em> bereit.
 </p>
   </section>
 
@@ -76,7 +88,7 @@
   </section>
 </main>
 
-<footer>© <span id="yr"></span> – Bereitgestellt als statische Website.</footer>
+<footer>© <span id="yr"></span> – 2025 AQILO - LIFE IS JUST A GAME - </footer>
 
 <script>
 /* ===== Kurz-Utilities ===== */
