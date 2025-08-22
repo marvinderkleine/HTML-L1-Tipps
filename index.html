@@ -39,6 +39,14 @@ footer {
   text-align: center; /* mittig ausgerichtet */
   text-shadow: 0 1px 2px rgba(0,0,0,0.3); /* leichter Schatten */
 }
+ul {
+  list-style-position: outside; /* Punkt bleibt am linken Rand */
+  padding-left: 2em;            /* Abstand von der ganzen Liste */
+}
+
+ul li {
+  padding-left: 0.5em;          /* zusätzlicher Abstand zwischen Punkt und Text */
+}
 </style>
 </head>
 <body>
@@ -46,7 +54,6 @@ footer {
   <div class="wrap">
     <h1>🛠️ Self-Service Troubleshooter</h1>
     <div class="right">
-      <button id="reload" class="btn" title="daten.json neu einlesen">Daten neu laden</button>
       <button id="pickbtn" class="btn" title="JSON-Datei von deinem Computer laden">JSON laden</button>
       <input id="pickfile" type="file" accept="application/json" hidden>
       <button id="reset" class="btn">Zurücksetzen</button>
@@ -58,15 +65,11 @@ footer {
   <!-- OBERER TEIL: dein frei editierbarer Text -->
   <section class="card">
     <h2>Willkommen beim Self-Service der PlusGarantie   </h2>
-<p>
-  Wählen Sie unten zuerst die <strong>Gerätegruppe</strong> und anschließend das <strong>Symptom</strong>.
-  Sie erhalten sofort mögliche <strong>Ursachen</strong> und <strong>Selbsthilfe-Tipps</strong>, 
-  damit Sie Ihr Gerät schnell wieder zum Laufen bringen.  
-  In mehr als der Hälfte aller Fälle können wir unseren Kundinnen und Kunden so bereits direkt weiterhelfen – 
-  ganz ohne Technikerbesuch.  
-  Falls das Problem dennoch bestehen bleibt halten Sie bitte bei einem Anruf Ihre <em>Vertragsnummer</em> 
-  und – sofern vorhanden – Ihre <em>Seriennummer</em> bereit.
-</p>
+<ul>
+  <li>Wählen Sie zunächst die passende <strong>Gerätegruppe</strong> und anschließend das <strong>Symptom</strong>.</li>
+  <li>Im Ergebnisbereich erscheinen mögliche <strong>Ursachen</strong> und hilfreiche <strong>Selbsthilfe-Tipps</strong>.</li>
+  <li>Mit <strong>„Zurücksetzen“</strong> können Sie jederzeit wieder von vorne starten.</li>
+</ul>
   </section>
 
   <!-- UNTERER TEIL: der Troubleshooter -->
@@ -246,12 +249,6 @@ $("#pickfile").onchange = async e=>{
   }finally{
     e.target.value="";
   }
-};
-
-$("#reload").onclick = async ()=>{
-  await tryLoadJson();
-  selectedDevice=null; selectedSymptom=null; symQuery=""; $("#symSearch").value="";
-  renderDevices(); renderSymptoms(); renderResult();
 };
 
 $("#reset").onclick = ()=>{
