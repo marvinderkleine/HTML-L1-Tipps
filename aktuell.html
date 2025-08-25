@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Self-Service Troubleshooter</title>
+<style>
+  :root{--bg:#f7f7f8;--card:#fff;--border:#e5e7eb;--text:#0a0a0a;--muted:#6b7280;--accent:#111}
+  *{box-sizing:border-box}
+  body{
+    margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    background:#f59e0b;color:var(--text)
+  }
+  header{position:sticky;top:0;background:#fff7;backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid var(--border);box-shadow:0 1px 0 rgba(0,0,0,.08);z-index:10}
+  .wrap{max-width:1040px;margin:0 auto;padding:14px 16px;display:flex;gap:16px;align-items:center}
+  h1{font-size:18px;margin:0;font-weight:700}
+  .right{margin-left:auto;display:flex;gap:8px}
+  .btn{padding:10px 14px;border:1px solid var(--border);border-radius:12px;background:#fff;cursor:pointer}
+  .btn:hover{background:#f3f4f6}
+
+  /* Tabs */
+  .tabs{display:flex;gap:8px;margin-left:8px}
+  .tab{padding:8px 12px;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
+  .tab:hover{background:#f3f4f6}
+  .tab.is-active{background:#111;color:#fff;border-color:#111}
+
+  /* Views (nur eine sichtbar) */
+  .view{display:none}
+  .view.is-active{display:block}
+
+  main{max-width:1040px;margin:0 auto;padding:24px 16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 6px 16px rgba(0,0,0,.06);margin-bottom:22px}
+  .kicker{font-size:11px;letter-spacing:.12em;color:var(--muted);font-weight:700;text-transform:uppercase}
+  .section-title{display:flex;gap:8px;align-items:center;margin-bottom:10px;border-bottom:1px solid #e5e7eb;padding-bottom:8px}
+  .section-title span:last-child{font-weight:bold;text-decoration:underline}
+  .flex{display:flex;flex-wrap:wrap;gap:8px;max-height:260px;overflow:auto;padding-right:4px}
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:#f3f4f6;   /* <-- Helles Grau statt Weiß */
+  cursor:pointer;
+  white-space:nowrap;
+  min-height:40px;
+}
+.chip:hover{
+  background:#e5e7eb;   /* <-- Etwas dunkleres Grau beim Hover */
+}
+.chip.sel{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
+  .chip:focus-visible{box-shadow:0 0 0 3px rgba(37,99,235,.25)}
+  .chip:active{transform:translateY(1px)}
+  .input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:12px}
+  .muted{color:var(--muted);font-size:14px}
+  .result h3{margin:.25rem 0 .5rem;font-size:18px}
+  .result ul{margin:.25rem 0 .9rem;padding-left:1.4rem;list-style:disc}
+  footer{max-width:1040px;margin:0 auto;padding:24px 16px 40px;color:#fff;font-size:14px;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+
+  /* Bullets-Abstand */
+  ul{list-style-position:outside;padding-left:2em}
+  ul li{padding-left:.5em}
+
+  /* einfache Tabelle für Seriennummer-Ansicht */
+  table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:12px;border:1px solid var(--border);background:#fff}
+  th,td{padding:12px 14px;border-bottom:1px solid var(--border);text-align:left}
+  tr:last-child td{border-bottom:none}
+  th{background:#f9fafb;font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>🛠️ Self-Service</h1>
+
+    <!-- Tabs -->
+ <nav class="tabs">
+  <button class="tab is-active" data-view="self">Troubleshooter</button>
+  <button class="tab" data-view="sn">Seriennummer</button>
+  <button class="tab" data-view="htel">Hersteller-Tel.</button>
+  <button class="tab" data-view="stel">Service-Tel.</button>
+</nav>
+
+    <div class="right">
+      <!-- Lass hier nur, was du brauchst -->
+      <button id="pickbtn" class="btn" title="JSON-Datei von deinem Computer laden">JSON laden</button>
+      <input id="pickfile" type="file" accept="application/json" hidden>
+      <button id="reset" class="btn">Zurücksetzen</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- VIEW: Self-Service -->
+  <div id="view-self" class="view is-active">
+    <section class="card">
+      <h2>Willkommen beim Self-Service der PlusGarantie</h2>
+      <ul>
+        <li>Wählen Sie zunächst die passende <strong>Gerätegruppe</strong> und anschließend das <strong>Symptom</strong>.</li>
+        <li>Im Ergebnisbereich erscheinen mögliche <strong>Ursachen</strong> und hilfreiche <strong>Selbsthilfe‑Tipps</strong>.</li>
+        <li>Mit <strong>„Zurücksetzen“</strong> können Sie jederzeit wieder von vorne starten.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <div class="section-title"><span class="kicker">Schritt 1</span><span>Gerätegruppe wählen</span></div>
+      <div id="devices" class="flex"></div>
+    </section>
+
+    <section class="card">
+      <div class="section-title"><span class="kicker">Schritt 2</span><span>Symptom wählen</span></div>
+      <input id="symSearch" class="input" placeholder="Symptom suchen (z. B. „pumpt nicht ab“)" />
+      <div id="symptoms" class="flex" style="margin-top:10px"></div>
+      <p id="symHint" class="muted" style="margin-top:8px">Bitte zuerst ein Gerät auswählen.</p>
+    </section>
+
+    <section class="card">
+      <div class="section-title"><span class="kicker">Ergebnis</span><span>Ursachen & Selbsthilfe‑Tipps</span></div>
+      <div id="result" class="result muted">Bitte Gerät und Symptom auswählen.</div>
+    </section>
+  </div>
+
+  <!-- VIEW: Seriennummer -->
+  <div id="view-sn" class="view">
+    <section class="card">
+      <h2>Wo finde ich die Seriennummer?</h2>
+      <table>
+        <tr><th>Gerätetyp</th><th>Position</th></tr>
+        <tr><td>Waschmaschine / Waschtrockner</td><td>Türrahmen innen oder Türdichtung • Rückseite</td></tr>
+        <tr><td>Geschirrspüler</td><td>Türseite innen • oberer Türrahmen</td></tr>
+        <tr><td>Kühlschrank / Kühl‑Gefrier‑Kombi</td><td>Innen‑Seitenwand • hinter Gemüsefach • Rückseite unten</td></tr>
+        <tr><td>Kaffeemaschine</td><td>Unterseite • Rückseite</td></tr>
+        <tr><td>Herd / Backofen</td><td>Innen im Türrahmen • hinter der unteren Schublade • Rückseite</td></tr>
+        <tr><td>Trockner</td><td>Türrahmen innen • Rückseite</td></tr>
+        <tr><td>TV‑Geräte</td><td>Rückseite • Menü „Info/Über das Gerät“</td></tr>
+      </table>
+    </section>
+  </div>
+  <!-- VIEW: Hersteller-Tel -->
+<div id="view-htel" class="view">
+  <section class="card">
+    <h2>Hersteller-Hotline</h2>
+    <ul>
+      <li>Hersteller A: 0800 123456</li>
+      <li>Hersteller B: 0800 987654</li>
+    </ul>
+  </section>
+</div>
+
+<!-- VIEW: Service-Tel -->
+<div id="view-stel" class="view">
+  <section class="card">
+    <h2>Service-Hotline</h2>
+    <ul>
+      <li>Kundendienst: 0800 111222</li>
+      <li>Technischer Service: 0800 333444</li>
+    </ul>
+  </section>
+</div>
+</main>
+
+<footer>© <span id="yr"></span> – 2025 AQILO – LIFE IS JUST A GAME –</footer>
+
+<script>
+/* ===== Kurz‑Utilities ===== */
+const $ = s => document.querySelector(s);
+const normalize = s => (s||"").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g,"");
+
+/* ===== Validierung ===== */
+function validateData(json){
+  if (!Array.isArray(json)) throw new Error("Root muss ein Array sein");
+  json.forEach(d=>{
+    if (typeof d.device!=="string" || !Array.isArray(d.items)) throw new Error("Ungültiges Device-Objekt");
+    d.items.forEach(i=>{
+      if (typeof i.symptom!=="string" || !Array.isArray(i.causes) || !Array.isArray(i.tips)){
+        throw new Error("Ungültiger Item-Eintrag");
+      }
+    });
+  });
+}
+
+/* ===== Demo‑Fallback ===== */
+const DEMO = [
+  {"device":"Geschirrspüler","items":[
+    {"symptom":"pumpt nicht ab","causes":["Fremdkörper in der Pumpe","Ablauf verstopft / blockiert"],"tips":["Siebe kontrollieren und reinigen","Ablaufschlauch am Syphon lösen (ACHTUNG! Druck!)","Ablaufschlauch auf Knicke prüfen"]},
+    {"symptom":"wäscht nicht sauber","causes":["Falsche Dosierung","Falsche Einstellung"],"tips":["Dosierung & Wasserhärte gemäß Anleitung einhalten"]}
+  ]},
+  {"device":"Herd","items":[{"symptom":"Kochplatte/Rohr geht nicht","causes":["Uhr nicht eingestellt"],"tips":["Uhr einstellen"]}]},
+  {"device":"Kaffeemaschine","items":[
+    {"symptom":"es kommt kein Wasser","causes":["Verkalkt","Verstopft"],"tips":["Entkalkungs-/Reinigungsprogramm","Auslässe reinigen"]},
+    {"symptom":"Milchschäumer geht nicht","causes":["Verstopft"],"tips":["Öffnung mit Pfeifenreiniger reinigen"]}
+  ]},
+  {"device":"Kühlschrank","items":[{"symptom":"Wasser steht im Gerät","causes":["Abtaurinne verstopft"],"tips":["Abflussöffnung reinigen"]}]},
+  {"device":"Kühlschrank-Kombi","items":[{"symptom":"kühlt nicht","causes":["Umgebungstemperatur zu kühl"],"tips":["Raumtemperatur > 15 °C sicherstellen"]}]},
+  {"device":"TV","items":[
+    {"symptom":"Bild farbfleckig","causes":["Clouding"],"tips":["Auf gute Belüftung achten"]},
+    {"symptom":"Bild hat Farbstich","causes":["HDMI/Scart defekt","Zuspielgerät defekt"],"tips":["Anderes Kabel/Gerät/Eingang testen"]},
+    {"symptom":"kein Bild","causes":["HDMI/Scart defekt","Zuspielgerät defekt","Karte aktiv?"],"tips":["Anderes Kabel/Gerät/Eingang testen"]}
+  ]},
+  {"device":"Waschmaschine","items":[
+    {"symptom":"pumpt nicht ab","causes":["Fremdkörper im Flusensieb","Ablauf verstopft/Blockade"],"tips":["Flusensieb reinigen (ACHTUNG: Restwasser!)","Ablaufschlauch auf Knicke prüfen"]},
+    {"symptom":"hüpft beim Schleudern","causes":["Gerät steht nicht richtig","Transportsicherungen","Unwucht"],"tips":["Gerät ausrichten","Transportsicherungen entfernen","Wäschemenge anpassen"]}
+  ]},
+  {"device":"Trockner","items":[{"symptom":"zeigt „Behälter voll“","causes":["Flusensiebe verstopft"],"tips":["Siebe reinigen"]}]}
+];
+
+/* ===== State ===== */
+let DATA = DEMO.slice();
+let selectedDevice = null;
+let selectedSymptom = null;
+let symQuery = "";
+
+/* ===== Rendering ===== */
+function renderDevices(){
+  const box = $("#devices"); if(!box) return; box.innerHTML = "";
+  [...DATA.map(d=>d.device)].sort((a,b)=>a.localeCompare(b)).forEach(name=>{
+    const b = document.createElement("button");
+    b.className = "chip"+(selectedDevice===name?" sel":"");
+    b.textContent = name;
+    b.onclick = ()=>{
+      selectedDevice=name; selectedSymptom=null; symQuery=""; const s=$("#symSearch"); if(s) s.value="";
+      renderDevices(); renderSymptoms(); renderResult();
+    };
+    box.appendChild(b);
+  });
+}
+function listSymptoms(){
+  const dev = DATA.find(d=>d.device===selectedDevice);
+  if (!dev) return [];
+  let items = dev.items;
+  if (symQuery){
+    const q = normalize(symQuery);
+    items = items.filter(i => normalize(i.symptom).includes(q));
+  }
+  return [...items].sort((a,b)=>a.symptom.localeCompare(b.symptom));
+}
+function renderSymptoms(){
+  const hint = $("#symHint"); const box = $("#symptoms"); if(!box) return; box.innerHTML = "";
+  if (hint) hint.style.display = selectedDevice ? "none" : "block";
+  if (!selectedDevice) return;
+  listSymptoms().forEach(i=>{
+    const b = document.createElement("button");
+    b.className = "chip"+(selectedSymptom===i.symptom?" sel":"");
+    b.textContent = i.symptom;
+    b.onclick = ()=>{ selectedSymptom=i.symptom; renderSymptoms(); renderResult(); };
+    box.appendChild(b);
+  });
+}
+function renderResult(){
+  const out = $("#result"); if(!out) return;
+  if (!selectedDevice || !selectedSymptom){
+    out.classList.add("muted");
+    out.textContent = "Bitte Gerät und Symptom auswählen.";
+    return;
+  }
+  const dev = DATA.find(d=>d.device===selectedDevice);
+  const item = dev?.items.find(i=>i.symptom===selectedSymptom);
+  if (!item){ out.textContent = "Keine Daten gefunden."; return; }
+  out.classList.remove("muted");
+  out.innerHTML = `
+    <h3>🔧 ${selectedDevice} – ${selectedSymptom}</h3>
+    <strong>Mögliche Ursachen</strong>
+    <ul>${item.causes.map(c=>`<li>${c}</li>`).join("")}</ul>
+    <strong>Selbsthilfe-Tipps</strong>
+    <ul>${item.tips.map(t=>`<li>${t}</li>`).join("")}</ul>
+    ${item.info ? `<div class="muted" style="margin-top:.5rem">${item.info}</div>` : ""}
+  `;
+}
+
+/* ===== daten.json automatisch laden (wenn vorhanden) ===== */
+async function tryLoadJson(){
+  try{
+    const url = "daten.json?cb=" + Date.now(); // Cache-Buster
+    const res = await fetch(url,{cache:"no-store"});
+    if(!res.ok) throw 0;
+    const json = await res.json();
+    validateData(json);
+    DATA = json;
+    console.log("daten.json geladen ✅");
+  }catch{
+    console.warn("daten.json nicht gefunden oder ungültig – Demo-Daten aktiv.");
+    DATA = DEMO.slice();
+  }
+}
+
+/* ===== Datei-Picker (optional) ===== */
+function readJsonFile(file){
+  return new Promise((resolve,reject)=>{
+    const fr=new FileReader();
+    fr.onload=()=>{ try{ const j=JSON.parse(fr.result); validateData(j); resolve(j); }catch(e){ reject(e); } };
+    fr.onerror=()=>reject(fr.error);
+    fr.readAsText(file,"utf-8");
+  });
+}
+$("#pickbtn")?.addEventListener("click", ()=> $("#pickfile").click());
+$("#pickfile")?.addEventListener("change", async e=>{
+  const f = e.target.files?.[0]; if(!f) return;
+  try{
+    DATA = await readJsonFile(f);
+    selectedDevice=null; selectedSymptom=null; symQuery=""; const s=$("#symSearch"); if(s) s.value="";
+    renderDevices(); renderSymptoms(); renderResult();
+    alert("JSON geladen ✅");
+  }catch(err){ alert("JSON ungültig: " + (err?.message || err)); }
+  finally{ e.target.value=""; }
+});
+
+$("#reset").addEventListener("click", ()=>{
+  selectedDevice=null; selectedSymptom=null; symQuery=""; const s=$("#symSearch"); if(s) s.value="";
+  renderDevices(); renderSymptoms(); renderResult();
+});
+$("#symSearch")?.addEventListener("input", e=>{ symQuery=e.target.value; renderSymptoms(); });
+
+/* ===== Tabs: sichere Umschaltung über Klassen ===== */
+function showView(which){
+  const self = document.getElementById('view-self');
+  const sn   = document.getElementById('view-sn');
+  const htel = document.getElementById('view-htel');
+  const stel = document.getElementById('view-stel');
+
+  const views = { self, sn, htel, stel };
+
+  // Sichtbarkeit umschalten
+  Object.entries(views).forEach(([key, el])=>{
+    if(el) el.classList.toggle('is-active', key===which);
+  });
+
+  // Aktiven Tab markieren
+  document.querySelectorAll('.tab')
+    .forEach(t => t.classList.toggle('is-active', t.dataset.view===which));
+
+  // URL-Hash aktualisieren
+  history.replaceState(null,'',
+    which==='sn'   ? '#seriennummer' :
+    which==='htel' ? '#hersteller'   :
+    which==='stel' ? '#service'      :
+    '#self'
+  );
+}
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click', ()=> showView(btn.dataset.view));
+});
+// Beim Laden: Hash beachten
+(function(){
+  const hash = location.hash.toLowerCase();
+  if(hash.includes('seriennummer')) showView('sn');
+  else if(hash.includes('hersteller')) showView('htel');
+  else if(hash.includes('service')) showView('stel');
+  else showView('self');
+})();
+
+/* ===== Init ===== */
+(async function init(){
+  $("#yr").textContent = new Date().getFullYear();
+  await tryLoadJson();
+  renderDevices(); renderSymptoms(); renderResult();
+})();
+</script>
+</body>
+</html>
