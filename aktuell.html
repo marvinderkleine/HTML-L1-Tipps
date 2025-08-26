@@ -71,6 +71,58 @@
   th,td{padding:12px 14px;border-bottom:1px solid var(--border);text-align:left}
   tr:last-child td{border-bottom:none}
   th{background:#f9fafb;font-weight:600}
+  .card h2 { margin-top:0; }
+
+.card button#reset {
+  white-space:nowrap;
+  align-self:flex-start;
+}
+.btn-reset {
+  background:#dc2626;      /* kräftiges Rot (Tailwind Red-600) */
+  color:#fff;
+  font-weight:700;
+  font-size:16px;
+  padding:14px 24px;
+  border-radius:14px;
+  border:none;
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
+  transition:background .2s ease, transform .05s ease;
+}
+
+.btn-reset:hover {
+  background:#b91c1c;      /* dunkleres Rot beim Hover */
+}
+
+.btn-reset:active {
+  transform:translateY(1px);
+}
+/* Hersteller-Tel: 2-Spalten-Layout */
+.hotline-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:16px;
+  align-items:start;
+}
+.list-scroll{ max-height:320px; overflow:auto; padding-right:4px; }
+.detail-box{
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:#fff;
+  padding:16px;
+  min-height:220px;
+}
+#brandDetail .phone{
+  font-size:22px; font-weight:800; margin:6px 0 10px;
+}
+.copy-btn{
+  padding:10px 14px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#f3f4f6;
+  cursor:pointer;
+}
+.copy-btn:hover{ background:#e5e7eb; }
+
 </style>
 </head>
 <body>
@@ -86,26 +138,29 @@
   <button class="tab" data-view="stel">Service-Tel.</button>
 </nav>
 
-    <div class="right">
-      <!-- Lass hier nur, was du brauchst -->
-      <button id="pickbtn" class="btn" title="JSON-Datei von deinem Computer laden">JSON laden</button>
-      <input id="pickfile" type="file" accept="application/json" hidden>
-      <button id="reset" class="btn">Zurücksetzen</button>
-    </div>
+<div class="right">
+  <button id="pickbtn" class="btn">JSON laden</button>
+  <input id="pickfile" type="file" accept="application/json" hidden>
+</div>
   </div>
 </header>
 
 <main>
   <!-- VIEW: Self-Service -->
   <div id="view-self" class="view is-active">
-    <section class="card">
-      <h2>Willkommen beim Self-Service der PlusGarantie</h2>
-      <ul>
-        <li>Wählen Sie zunächst die passende <strong>Gerätegruppe</strong> und anschließend das <strong>Symptom</strong>.</li>
-        <li>Im Ergebnisbereich erscheinen mögliche <strong>Ursachen</strong> und hilfreiche <strong>Selbsthilfe‑Tipps</strong>.</li>
-        <li>Mit <strong>„Zurücksetzen“</strong> können Sie jederzeit wieder von vorne starten.</li>
-      </ul>
-    </section>
+ <section class="card" style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
+  <div>
+    <h2>Willkommen beim Troubleshooter der PlusGarantie</h2>
+    <ul>
+      <li>Wählen Sie zunächst die passende <strong>Gerätegruppe</strong> und anschließend das <strong>Symptom</strong>.</li>
+      <li>Im Ergebnisbereich erscheinen mögliche <strong>Ursachen</strong> und hilfreiche <strong>Selbsthilfe-Tipps</strong>.</li>
+      <li>Mit <strong>„Zurücksetzen“</strong> können Sie jederzeit wieder von vorne starten.</li>
+    </ul>
+  </div>
+  <div>
+ <button id="reset" class="btn btn-reset">Zurücksetzen</button>
+  </div>
+</section>
 
     <section class="card">
       <div class="section-title"><span class="kicker">Schritt 1</span><span>Gerätegruppe wählen</span></div>
@@ -141,14 +196,36 @@
       </table>
     </section>
   </div>
-  <!-- VIEW: Hersteller-Tel -->
+
+<!-- VIEW: Hersteller-Tel -->
 <div id="view-htel" class="view">
   <section class="card">
     <h2>Hersteller-Hotline</h2>
-    <ul>
-      <li>Hersteller A: 0800 123456</li>
-      <li>Hersteller B: 0800 987654</li>
-    </ul>
+
+    <div class="section-title">
+      <span class="kicker">Suche</span>
+      <span>Gib die Anfangsbuchstaben ein (z. B. „bo“)</span>
+    </div>
+    <input id="brandSearch" class="input" placeholder="Anfangsbuchstaben eingeben …" />
+
+    <div class="hotline-grid">
+      <!-- Linke Spalte: Trefferliste -->
+      <div>
+        <div class="section-title" style="margin-top:10px">
+          <span class="kicker">Treffer</span><span>Hersteller auswählen</span>
+        </div>
+        <div id="brandList" class="flex list-scroll"></div>
+        <p id="brandHint" class="muted">Bitte zuerst mindestens einen Buchstaben eingeben.</p>
+      </div>
+
+      <!-- Rechte Spalte: Detail -->
+      <div class="detail-box">
+        <div class="section-title" style="margin-top:10px">
+          <span class="kicker">Telefon</span><span>Nummer & Kopieren</span>
+        </div>
+        <div id="brandDetail" class="muted">Noch kein Hersteller ausgewählt.</div>
+      </div>
+    </div>
   </section>
 </div>
 
@@ -271,6 +348,86 @@ function renderResult(){
     ${item.info ? `<div class="muted" style="margin-top:.5rem">${item.info}</div>` : ""}
   `;
 }
+/* ===== Hersteller-Suche/Anzeige ===== */
+let brandQuery = "";
+let selectedBrand = null;
+
+function filterBrands(q){
+  const nq = normalize((q || "").replace(/\s+/g," ").trim());
+  if(!nq) return [];
+  return HOTLINES
+    .slice()
+    .filter(b => normalize(b.name).startsWith(nq))
+    .sort((a,b)=> a.name.localeCompare(b.name));
+}
+
+function renderBrandList(){
+  const box  = document.getElementById('brandList');
+  const hint = document.getElementById('brandHint');
+  if(!box) return;
+
+  box.innerHTML = "";
+  const items = filterBrands(brandQuery);
+
+  hint && (hint.style.display = brandQuery ? "none" : "block");
+  if(!brandQuery) return;
+
+  if(items.length === 0){
+    const p = document.createElement('p');
+    p.className = 'muted';
+    p.textContent = 'Keine Treffer. Tipp: nur Anfangsbuchstaben (z. B. „bo“).';
+    box.appendChild(p);
+    return;
+  }
+
+  items.forEach(b=>{
+    const btn = document.createElement('button');
+    btn.className = 'chip' + (selectedBrand?.name === b.name ? ' sel' : '');
+    btn.textContent = b.name;
+    btn.onclick = ()=>{ selectedBrand = b; renderBrandList(); renderBrandDetail(); };
+    box.appendChild(btn);
+  });
+}
+
+function renderBrandDetail(){
+  const out = document.getElementById('brandDetail');
+  if(!out) return;
+
+  if(!selectedBrand){
+    out.classList.add('muted');
+    out.textContent = 'Noch kein Hersteller ausgewählt.';
+    return;
+  }
+
+  out.classList.remove('muted');
+  
+ out.innerHTML = `
+  <div class="phone">${selectedBrand.phone || ''}</div>
+  ${selectedBrand.phone ?
+     `<button class="copy-btn" id="copyPhone">Nummer kopieren</button>`
+  : `<div class="muted">Keine Nummer hinterlegt.</div>`}
+`;
+
+  document.getElementById('copyPhone')?.addEventListener('click', async ()=>{
+    try{
+      await navigator.clipboard.writeText(selectedBrand.phone);
+      const btn = document.getElementById('copyPhone');
+      const old = btn.textContent;
+      btn.textContent = 'Kopiert ✓';
+      setTimeout(()=> btn.textContent = old, 1200);
+    }catch{}
+  });
+}
+
+// Eingabefeld überwachen
+document.addEventListener('input', (e)=>{
+  if(e.target && e.target.id === 'brandSearch'){
+    brandQuery = e.target.value;
+    selectedBrand = null;
+    renderBrandList();
+    renderBrandDetail();
+  }
+});
 
 /* ===== daten.json automatisch laden (wenn vorhanden) ===== */
 async function tryLoadJson(){
@@ -352,12 +509,32 @@ document.querySelectorAll('.tab').forEach(btn=>{
   else if(hash.includes('service')) showView('stel');
   else showView('self');
 })();
-
+// ===== Hersteller-Hotlines (Basis) =====
+let HOTLINES = [
+  { name:"AEG", phone:"0911 323 21 10" },
+  { name:"Amica", phone:"02593 95 67 200" },
+  { name:"Bauknecht / Privileg", phone:"0711 8888 900" },
+  { name:"Beko", phone:"06102 868 68 91" },
+  { name:"Blomberg", phone:"06102 86 86 89 2" },
+  { name:"Bomann", phone:"02152 9939111" },
+  { name:"Bosch", phone:"089 69 339 339" },
+  { name:"Candy / Hoover", phone:"01806 62 55 62" },
+  { name:"Caso", phone:"02932 80 554 0" },
+  { name:"Comfee (Midea)", phone:"06196 90 200" }
+  // weitere Hersteller nach Bedarf
+];
 /* ===== Init ===== */
 (async function init(){
   $("#yr").textContent = new Date().getFullYear();
-  await tryLoadJson();
-  renderDevices(); renderSymptoms(); renderResult();
+await tryLoadJson();
+
+renderDevices(); 
+renderSymptoms(); 
+renderResult();
+
+// Hersteller-UI initial rendern
+renderBrandList();
+renderBrandDetail();
 })();
 </script>
 </body>
