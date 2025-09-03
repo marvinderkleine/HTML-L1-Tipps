@@ -73,10 +73,11 @@
   th{background:#f9fafb;font-weight:600}
   .card h2 { margin-top:0; }
 
-.card button#reset {
-  white-space:nowrap;
-  align-self:flex-start;
-}
+/* Zebra-Streifen nur für Tabellen mit class="zebra" */
+table.zebra { background: transparent; }
+table.zebra tbody tr:nth-child(odd)  td { background: #fafafa; } /* hellgrau */
+table.zebra tbody tr:nth-child(even) td { background: #ffffff; } /* weiß   */
+table.zebra tbody tr:hover td         { background: #f0f2f5; }   /* Hover */
 .btn-reset {
   background:#dc2626;      /* kräftiges Rot (Tailwind Red-600) */
   color:#fff;
@@ -101,7 +102,7 @@
   display:grid;
   grid-template-columns: 1fr 1fr;
   gap:16px;
-  align-items:start;
+  align-items:stretch;   /* beide Boxen gleich hoch */
 }
 .list-scroll{ max-height:320px; overflow:auto; padding-right:4px; }
 .detail-box{
@@ -121,7 +122,75 @@
   background:#f3f4f6;
   cursor:pointer;
 }
-.copy-btn:hover{ background:#e5e7eb; }
+.copy-btn:hover{ 
+  background:#e5e7eb; 
+}
+
+/* Telefonnummern-Links global neutralisieren */
+a[href^="tel:"]{
+  color:#000 !important;            /* schwarz */
+  text-decoration:none !important;  /* keine Unterstreichung */
+  pointer-events:none;              /* nicht klickbar */
+  cursor:default;                   /* kein Link-Cursor */
+}
+
+/* Telefonnummern Styling */
+.phone {
+  color: #000;             /* schwarz */
+  font-weight: 600;        /* etwas fetter */
+  text-decoration: none;   /* keine Unterstreichung */
+  cursor: default;         /* kein Klick-Cursor */
+}
+th,td{padding:12px 14px;border-bottom:1px solid var(--border);text-align:left}
+tr:last-child td{border-bottom:none}
+th{background:#f9fafb;font-weight:600}
+
+/* Zebra-Streifen für Tabellenzeilen */
+table tr:nth-child(even) td {
+  background-color: #f9fafb;
+}
+#flowStandard li {
+  margin-bottom: 0;   /* Abstand entfernen */
+}
+
+#flowStandard li + li {
+  margin-top: -1px;   /* sorgt dafür, dass Boxen sauber aneinanderliegen */
+}
+
+/* nach jedem Kunden-Eintrag (also nach jeder geraden Zeile) größerer Abstand */
+#flowStandard li:nth-child(even) {
+  margin-bottom: 16px;
+}
+/* Gesprächsablauf: Rollenfarben */
+#view-flow .role--mit { color:#dc2626; font-weight:700; } /* Mitarbeiter */
+#view-flow .role--kun { color:#16a34a; font-weight:700; } /* Kunde */
+
+.mitarbeiter {
+  color: red;
+  font-weight: bold;
+}
+.kunde {
+  color: green;
+  font-weight: bold;
+}
+
+/* Abstand nur nach Kunden-Zeilen */
+.kunde-line {
+  margin-bottom: 1rem; /* kannst du größer/kleiner machen */
+}
+/* Dialog: Mitarbeiter-Zeilen grau hinterlegen */
+.dialog-gray{
+  background:#f6f7f9;
+  border-radius:6px;
+  padding:6px 10px;
+}
+/* Dialog: Kunden-Zeilen weiß hinterlegen */
+.dialog-white {
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 6px 10px;
+  border: 1px solid #eee; /* feiner Rahmen, optional */
+}
 
 </style>
 </head>
@@ -133,9 +202,9 @@
     <!-- Tabs -->
  <nav class="tabs">
   <button class="tab is-active" data-view="self">Troubleshooter</button>
-  <button class="tab" data-view="sn">Seriennummer</button>
+  <button class="tab" data-view="sn">Seriennummern</button>
   <button class="tab" data-view="htel">Hersteller-Tel.</button>
-  <button class="tab" data-view="stel">Service-Tel.</button>
+  <button class="tab" data-view="flow">Gesprächsablauf</button>
 </nav>
 
 <div class="right">
@@ -184,15 +253,14 @@
   <div id="view-sn" class="view">
     <section class="card">
       <h2>Wo finde ich die Seriennummer?</h2>
-      <table>
+      <table class="zebra">
         <tr><th>Gerätetyp</th><th>Position</th></tr>
-        <tr><td>Waschmaschine / Waschtrockner</td><td>Türrahmen innen oder Türdichtung • Rückseite</td></tr>
-        <tr><td>Geschirrspüler</td><td>Türseite innen • oberer Türrahmen</td></tr>
-        <tr><td>Kühlschrank / Kühl‑Gefrier‑Kombi</td><td>Innen‑Seitenwand • hinter Gemüsefach • Rückseite unten</td></tr>
-        <tr><td>Kaffeemaschine</td><td>Unterseite • Rückseite</td></tr>
-        <tr><td>Herd / Backofen</td><td>Innen im Türrahmen • hinter der unteren Schublade • Rückseite</td></tr>
-        <tr><td>Trockner</td><td>Türrahmen innen • Rückseite</td></tr>
-        <tr><td>TV‑Geräte</td><td>Rückseite • Menü „Info/Über das Gerät“</td></tr>
+        <tr><td>Waschmaschine / Waschtrockner</td><td>Türrahmen innen oder Türdichtung / Rückseite</td></tr>
+        <tr><td>Geschirrspüler</td><td>Türseite innen / oberer Türrahmen</td></tr>
+        <tr><td>Kühlschrank / Kühl‑Gefrier‑Kombi</td><td>Innen‑Seitenwand / hinter Gemüsefach / Rückseite unten</td></tr>
+        <tr><td>Herd / Backofen</td><td>Innen im Türrahmen / hinter der unteren Schublade / Rückseite</td></tr>
+        <tr><td>Trockner</td><td>Türrahmen innen / Rückseite</td></tr>
+        <tr><td>TV‑Geräte</td><td>Rückseite / Menü „Info/Über das Gerät“</td></tr>
       </table>
     </section>
   </div>
@@ -210,7 +278,7 @@
 
     <div class="hotline-grid">
       <!-- Linke Spalte: Trefferliste -->
-      <div>
+      <div class="detail-box">
         <div class="section-title" style="margin-top:10px">
           <span class="kicker">Treffer</span><span>Hersteller auswählen</span>
         </div>
@@ -225,18 +293,66 @@
         </div>
         <div id="brandDetail" class="muted">Noch kein Hersteller ausgewählt.</div>
       </div>
-    </div>
-  </section>
-</div>
+    </div> <!-- Ende .hotline-grid -->
 
-<!-- VIEW: Service-Tel -->
-<div id="view-stel" class="view">
+    <!-- NEU: Übersicht nur hier -->
+    <section class="card" style="margin-top:20px">
+      <div class="section-title">
+        <span class="kicker">Übersicht</span>
+        <span>Alle Hersteller & Nummern</span>
+      </div>
+      <div id="allHotlines"></div>
+    </section>
+
+  </section>
+</div> <!-- Ende VIEW: Hersteller-Tel -->
+
+<!-- VIEW: Gesprächsablauf -->
+<div id="view-flow" class="view">
   <section class="card">
-    <h2>Service-Hotline</h2>
-    <ul>
-      <li>Kundendienst: 0800 111222</li>
-      <li>Technischer Service: 0800 333444</li>
-    </ul>
+    <h2>Gesprächsablauf</h2>
+
+    <!-- Teil A: Standard-Dialog -->
+    <div class="section-title">
+      <span class="kicker">Standard</span>
+      <span>Optimaler Dialog (Kurzleitfaden)</span>
+    </div>
+    <ol id="flowStandard" class="flow-dialog" style="margin-left:1.2rem; line-height:1.55;">
+      <li>Mitarbeiter: Willkommen bei der Plusgarantie, wie kann ich Ihnen weiterhelfen?</li>
+      <li>Kunde: Hallo, mein Gerät funktioniert nicht richtig.</li>
+      <li>Mitarbeiter: Bitte geben Sie mir nochmals die <strong>Vertragsnummer</strong>, welche sie vorhin ins Telefon eingegeben haben.</li>
+      <li>Kunde: Die Vertragsnummer lautet „12345.1234567“ </li>
+      <li>Mitarbeiter: Vielen Dank, ich sehe <strong>Sie haben Gerät „X". Was genau funktioniert bei diesem Gerät nicht?</strong></li>
+      <li>Kunde: „Beschädigung des Kunden“</li>
+      <li>Mitarbeiter: Haben Sie (…) und (…) ausprobiert? <strong>(Abfrage der L1-Tipps)</strong></li>
+      <li>Kunde: Ja, nichts hat geholfen.</li>
+      <li>Mitarbeiter: Dann würde ich noch gerne die <strong>Kundendaten</strong> mit Ihnen durchgehen. Können sie mir bitte Ihren <strong>Vor- und Nachnamen</strong> sagen?</li>
+      <li>Kunde: Vorname „Max“, Nachname „Mustermann“.</li>
+      <li>Mitarbeiter: Die <strong>Straße</strong> in der sich das Gerät gerade befindet?</li>
+      <li>Kunde: „Musterhausen 10“</li>
+      <li>Mitarbeiter: Perfekt, wie lautet die <strong>Postleitzahl</strong>?</li>
+      <li>Kunde: „1234“</li>
+      <li>Mitarbeiter: Darf ich Ihre <strong>Telefonnummer</strong>, mit der Sie gerade anrufen gleich kopieren?</li>
+      <li>Kunde: Ja (dann Telefonnummer vom Display EINTIPPEN INS SYSTEM)</li>
+      <li>Mitarbeiter: Darf ich bitte noch Ihre <strong>E-Mail-Adresse</strong> notieren?</li>
+      <li>Kunde: „max.mustermann@gmail.com“</li>
+    </ol>
+
+    <!-- Teil B: Branching-Buttons -->
+    <div class="section-title" style="margin-top:14px">
+      <span class="kicker">Vertiefung</span>
+      <span>nach Gerätegruppe</span>
+    </div>
+    <div id="flowCats" class="flex" style="max-height:none">
+      <button class="chip" data-cat="weiss">Weissware</button>
+      <button class="chip" data-cat="tv">TV</button>
+      <button class="chip" data-cat="klein">Kleingeräte</button>
+    </div>
+
+    <!-- Fortsetzung wird hier angezeigt -->
+    <div id="flowDetail" class="card" style="margin-top:12px">
+      <div class="muted">Bitte eine Produktgruppe oben wählen.</div>
+    </div>
   </section>
 </div>
 </main>
@@ -400,13 +516,13 @@ function renderBrandDetail(){
   }
 
   out.classList.remove('muted');
-  
- out.innerHTML = `
-  <div class="phone">${selectedBrand.phone || ''}</div>
-  ${selectedBrand.phone ?
-     `<button class="copy-btn" id="copyPhone">Nummer kopieren</button>`
-  : `<div class="muted">Keine Nummer hinterlegt.</div>`}
-`;
+  out.innerHTML = `
+    <div><strong>Hersteller:</strong><br>${selectedBrand.name}</div>
+    <div class="phone">${selectedBrand.phone || '–'}</div>
+    ${selectedBrand.phone ? `
+      <button class="copy-btn" id="copyPhone">Nummer kopieren</button>
+    ` : `<div class="muted">Keine Nummer hinterlegt.</div>`}
+  `;
 
   document.getElementById('copyPhone')?.addEventListener('click', async ()=>{
     try{
@@ -477,52 +593,285 @@ function showView(which){
   const self = document.getElementById('view-self');
   const sn   = document.getElementById('view-sn');
   const htel = document.getElementById('view-htel');
-  const stel = document.getElementById('view-stel');
+  const flow = document.getElementById('view-flow');   // Gesprächsablauf
 
-  const views = { self, sn, htel, stel };
+  // nur noch diese Views!
+  const views = { self, sn, htel, flow };
 
   // Sichtbarkeit umschalten
   Object.entries(views).forEach(([key, el])=>{
-    if(el) el.classList.toggle('is-active', key===which);
+    if (!el) return;
+    el.classList.toggle('is-active', key === which);
   });
 
   // Aktiven Tab markieren
   document.querySelectorAll('.tab')
-    .forEach(t => t.classList.toggle('is-active', t.dataset.view===which));
+    .forEach(t => t.classList.toggle('is-active', t.dataset.view === which));
 
-  // URL-Hash aktualisieren
+  // URL-Hash aktualisieren (Service raus)
   history.replaceState(null,'',
     which==='sn'   ? '#seriennummer' :
     which==='htel' ? '#hersteller'   :
-    which==='stel' ? '#service'      :
+    which==='flow' ? '#gespraech'    :
     '#self'
   );
 }
+
 document.querySelectorAll('.tab').forEach(btn=>{
   btn.addEventListener('click', ()=> showView(btn.dataset.view));
 });
 // Beim Laden: Hash beachten
 (function(){
   const hash = location.hash.toLowerCase();
-  if(hash.includes('seriennummer')) showView('sn');
-  else if(hash.includes('hersteller')) showView('htel');
-  else if(hash.includes('service')) showView('stel');
+  if      (hash.includes('seriennummer')) showView('sn');
+  else if (hash.includes('hersteller'))   showView('htel');
+  else if (hash.includes('gespraech'))    showView('flow');
   else showView('self');
 })();
 // ===== Hersteller-Hotlines (Basis) =====
+// ===== Hersteller-Hotlines (vollständig) =====
 let HOTLINES = [
-  { name:"AEG", phone:"0911 323 21 10" },
-  { name:"Amica", phone:"02593 95 67 200" },
-  { name:"Bauknecht / Privileg", phone:"0711 8888 900" },
-  { name:"Beko", phone:"06102 868 68 91" },
-  { name:"Blomberg", phone:"06102 86 86 89 2" },
-  { name:"Bomann", phone:"02152 9939111" },
-  { name:"Bosch", phone:"089 69 339 339" },
-  { name:"Candy / Hoover", phone:"01806 62 55 62" },
-  { name:"Caso", phone:"02932 80 554 0" },
-  { name:"Comfee (Midea)", phone:"06196 90 200" }
-  // weitere Hersteller nach Bedarf
+  { name:"AEG",                   phone:"0911 323 21 10" },
+  { name:"Amica",                 phone:"02593 95 67 200" },
+  { name:"Bauknecht / Privileg",  phone:"0711 8888 900" },
+  { name:"Beko",                  phone:"06102 868 68 91" },
+  { name:"Blomberg",              phone:"06102 86 86 89 2" },
+  { name:"Bomann",                phone:"02152 9939111" },
+  { name:"Bosch",                 phone:"089 69 339 339" },
+  { name:"Candy / Hoover",        phone:"01806 62 55 62" },
+  { name:"Caso",                  phone:"02932 80 554 0" },
+  { name:"Comfee (Midea)",        phone:"06196 90 200" },
+  { name:"Dyson",                 phone:"0800 31 31 318" },
+  { name:"Electrolux / AEG",      phone:"0911 323 21 10" },
+  { name:"Exquisit (EGS)",        phone:"02944 97 166" },
+  { name:"Gorenje",               phone:"089 200 06 32 32" },
+  { name:"Grundig TV",            phone:"0911 59 05 97 30" },
+  { name:"Grundig WW",            phone:"06102 86 86 893" },
+  { name:"Haier",                 phone:"0211 418 73 140" },
+  { name:"Haier TV",              phone:"01805 059 060" },
+  { name:"Hisense TV",            phone:"089 2000 63 252" },
+  { name:"Hisense WW",            phone:"089 2000 63 251" },
+  { name:"Jay-Tech",              phone:"02161 575 890" },
+  { name:"JTC",                   phone:"02161 575 890 oder 02161 575 8950 bei techn. Fragen" },
+  { name:"Jura",                  phone:"0180 35 23 333" },
+  { name:"Koenic",                phone:"0800 7246 878" },
+  { name:"Lenco",                 phone:"02153 121 69 19" },
+  { name:"LG",                    phone:"0800 45 444 45" },
+  { name:"Liebherr",              phone:"0800 583 60 03" },
+  { name:"Loewe",                 phone:"09261 99 500 geht nicht mehr" },
+  { name:"Midea",                 phone:"06196 90 200" },
+  { name:"Miele",                 phone:"0800 22 44 666" },
+  { name:"NEFF",                  phone:"089 124 74 474" },
+  { name:"OK.",                   phone:"0800 499 4998" },
+  { name:"Panasonic",             phone:"040 5555 88 55" },
+  { name:"PEAQ",                  phone:"0800 777 222 6" },
+  { name:"Philips / Saeco",       phone:"040 8080 10 980" },
+  { name:"PKM",                   phone:"02841 999 49 72" },
+  { name:"Respekta",              phone:"062 36 46 320" },
+  { name:"Samsung",               phone:"0800 72 67 864 oder 06196 77 555 77" },
+  { name:"Schneider",             phone:"" }, // keine Nummer → „—“
+  { name:"Severin",               phone:"0800 44 33 500" },
+  { name:"Siemens",               phone:"089 21 751 751" },
+  { name:"Sharp",                 phone:"089 896 58 758" },
+  { name:"Sony",                  phone:"0303 464 90 59" },
+  { name:"Strong",                phone:"0180 501 4991" },
+  { name:"TCL",                   phone:"0211 33 99 59 66" },
+  { name:"Telefunken",            phone:"069 6000" },
+  { name:"Toshiba",               phone:"089 12 22 32 032" },
+  { name:"Vestel",                phone:"089 211 29 555" },
+  { name:"Xiaomi",                phone:"0800 223 11 44" },
+  { name:"Zanussi",               phone:"0911 323 2110" }
 ];
+
+// hilft beim sicheren Einfügen von Text
+function escapeHtml(s){
+  const d=document.createElement('div'); d.innerText=String(s ?? ''); return d.innerHTML;
+}
+
+// komplette Herstellerliste unten rendern
+function renderAllHotlinesList(list = HOTLINES){
+  const host = document.getElementById('allHotlines');
+  if(!host) return;
+
+  const rows = (list||[])
+    .filter(x => x && x.name) // auch ohne Nummer anzeigen
+    .slice()
+    .sort((a,b)=> a.name.localeCompare(b.name, 'de'));
+
+  if(rows.length === 0){
+    host.innerHTML = '<p class="muted">Keine Hotlines vorhanden.</p>';
+    return;
+  }
+
+  host.innerHTML = `
+    <table class="table-hotlines">
+      <thead>
+        <tr><th>Hersteller</th><th>Telefon</th><th></th></tr>
+      </thead>
+      <tbody>
+        ${rows.map(r=>{
+          const phoneTxt = r.phone && r.phone.trim() ? r.phone : '—';
+          const href     = r.phone ? `tel:${r.phone.replace(/\s+/g,'')}` : null;
+          const phoneTd  = href
+            ? `<a href="${href}">${escapeHtml(phoneTxt)}</a>`
+            : `${escapeHtml(phoneTxt)}`;
+          const copyBtn  = r.phone
+            ? `<button class="copy-btn" data-phone="${escapeHtml(r.phone)}">Kopieren</button>`
+            : '';
+          return `
+            <tr>
+              <td>${escapeHtml(r.name)}</td>
+              <td>${phoneTd}</td>
+              <td>${copyBtn}</td>
+            </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+
+  // „Kopieren“-Buttons (Event-Delegation)
+  host.addEventListener('click', (ev)=>{
+    const btn = ev.target.closest('.copy-btn'); if(!btn) return;
+    navigator.clipboard.writeText(btn.dataset.phone || '');
+    const old = btn.textContent; btn.textContent = 'Kopiert ✓';
+    setTimeout(()=> btn.textContent = old, 1200);
+  }, { once:true });
+}
+
+// ===== Gesprächsablauf: vertiefende Dialoge =====
+const FLOW_TEXT = {
+  weiss: [
+    "Mitarbeiter: Könnten Sie mir bitte noch die <strong>Seriennummer</strong> sagen?",
+    "Kunde: „12345678“.",
+    "Mitarbeiter: Bitte beachten Sie: Sollte sich bei der Prüfung zeigen, dass <strong>kein versicherter Schaden</strong> vorliegt, übernimmt die Versicherung die Kosten leider nicht!",
+    "Kunde: Woher weiß ich ob mein Schaden versichert ist?",
+    "Mitarbeiter: Nicht versichert sind Schäden durch <strong>Eigenverschulden</strong>, wie etwa wenn ein Fremdkörper ins Gerät gelangt. (Waschmaschine)",
+    "Kunde: Aso okay, jetzt kenne ich mich aus.",
+    "Mitarbeiter: Dankeschön, ich wünsche Ihnen noch einen schönen Tag!",
+  ],
+  tv: [
+    "Mitarbeiter: Könnten Sie mir bitte noch die <strong>Seriennummer</strong> sagen?",
+    "Kunde: „12345678“.",
+    "Mitarbeiter:  Ich leite jetzt alles an den Servicebetrieb weiter, der wird Sie wegen eines Reparaturtermins kontaktieren. Falls ein <strong>Leihgerät</strong> vorhanden ist, hätten Sie Interesse daran?",
+    "Kunde: Ja/Nein",
+    "Mitarbeiter: Bitte beachten Sie: Sollte sich bei der Prüfung zeigen, dass <strong>kein versicherter Schaden</strong> vorliegt, übernimmt die Versicherung die Kosten leider nicht!",
+    "Kunde: Woher weiß ich ob mein Schaden versichert ist?",
+    "Mitarbeiter: Nicht versichert sind Schäden durch <strong>Eigenverschulden</strong>, wie etwa wenn ein Fremdkörper ins Gerät gelangt. (Waschmaschine)",
+    "Kunde: Aso okay, jetzt kenne ich mich aus.",
+    "Mitarbeiter: Dankeschön, ich wünsche Ihnen noch einen schönen Tag!",
+  ],
+  klein: [
+    "Mitarbeiter: Einen Moment bitte, ich lege den Schaden kurz an und gebe Ihnen gleich Ihre <strong>Bearbeitungsnummer</strong>.",
+    "Kunde: Ja passt.",
+    "Mitarbeiter: Die Nummer lautet „xxxxxxxx“",
+    "Kunde: Okay danke.",
+    "Mitarbeiter: Bei <strong>Kleingeräten</strong>, wie einer Kaffeemaschine gehen Sie bitte mit der Rechnung zu einem  <strong>MediaMarkt oder Saturn</strong> in Ihrer Nähe. Wenden Sie sich dort an den Servicemitarbeiter neben den Kassen. Das Gerät wird dann geprüft und für die Reparatur an den Servicebetrieb geschickt. Für Kleingeräte ist dieser Weg leider notwendig. ",
+    "Kunde: Kein Problem.",
+    "Mitarbeiter: Dankeschön, ich wünsche Ihnen noch einen schönen Tag!",
+  ]
+};
+
+function renderFlowDetail(cat){
+  const box = document.getElementById('flowDetail');
+  if(!box) return;
+  const lines = FLOW_TEXT[cat];
+  if(!lines){
+    box.innerHTML = '<div class="muted">Bitte eine Produktgruppe oben wählen.</div>';
+    return;
+  }
+  box.innerHTML = `
+    <strong>Fortsetzung – ${cat==='weiss'?'Weissware':cat==='tv'?'TV':'Kleingeräte'}</strong>
+    <ol style="margin-left:1.2rem; line-height:1.55; margin-top:.5rem;">
+      ${lines.map(li=>{
+         const lower = li.trim().toLowerCase();
+         const cls = lower.startsWith("mitarbeiter") ? "dialog-gray" :
+              lower.startsWith("kunde") ? "dialog-white" : "";
+        return `<li class="${cls}">${li}</li>`;
+          }).join('')}
+    </ol>
+  `;
+  colorizeRolesIn(box);
+}
+
+// Klicks auf die drei Chips explizit binden
+function setupFlowClicks(){
+  const chips = document.querySelectorAll('#flowCats .chip');
+  chips.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      chips.forEach(b=>b.classList.remove('sel'));
+      btn.classList.add('sel');
+      renderFlowDetail(btn.dataset.cat);
+    });
+  });
+}
+
+// färbt nur die Worte "Mitarbeiter" und "Kunde" im übergebenen Container
+function colorizeRolesIn(root){
+  if(!root) return;
+  const walk = (node)=>{
+    if(node.nodeType===3){ // Text
+      let text=node.textContent;
+      let replaced=false;
+
+      if(text.includes("Mitarbeiter:")){
+        text=text.replace("Mitarbeiter:", "<span class='mitarbeiter'>Mitarbeiter:</span>");
+        replaced=true;
+      }
+      if(text.includes("Kunde:")){
+        text=text.replace("Kunde:", "<span class='kunde'>Kunde:</span>");
+        // <li> bekommt Extra-Klasse für Abstand
+        if(node.parentElement && node.parentElement.tagName==="LI"){
+          node.parentElement.classList.add("kunde-line");
+        }
+        replaced=true;
+      }
+      if(replaced){
+        const span=document.createElement("span");
+        span.innerHTML=text;
+        node.replaceWith(span);
+      }
+    } else {
+      node.childNodes.forEach(walk);
+    }
+  };
+  walk(root);
+}
+
+function markMitarbeiterRows(root = document){
+  // Bevorzugt nur Dialog-Container; sonst alle <li>
+  const candidates = root.querySelectorAll('#dialog li, .dialog li, .dialog-list li');
+  const items = candidates.length ? candidates : root.querySelectorAll('li');
+
+  items.forEach(li => {
+    // Zeilentext normalisieren
+    const txt = li.textContent.replace(/\s+/g,' ').trim().toLowerCase();
+
+    // Erkennen, ob die Zeile mit "Mitarbeiter:" oder "Kunde:" beginnt
+    const isMitarbeiter = /^(?:\d+\.\s*)?mitarbeiter\s*:/.test(txt);
+    const isKunde       = /^(?:\d+\.\s*)?kunde\s*:/.test(txt);
+
+    // Klassen setzen/entfernen
+    li.classList.toggle('dialog-gray',  isMitarbeiter);
+    li.classList.toggle('dialog-white', isKunde);
+  });
+  
+}
+// Färbt alle li in root: Mitarbeiter -> grau, Kunde -> weiß
+function paintListByRole(root){
+  if(!root) return;
+  root.querySelectorAll('li').forEach(li=>{
+    // robust gegen Nummerierung "1. ", Leerzeichen und fett/Spans
+    const t = li.textContent.trim().toLowerCase();
+    const m = t.match(/^(\d+\.\s*)?\s*(mitarbeiter|kunde)\s*:/);
+    const role = m ? m[2] : null;
+
+    li.classList.toggle('dialog-gray',  role === 'mitarbeiter');
+    li.classList.toggle('dialog-white', role === 'kunde');
+  });
+}
+function markAllDialogBlocks(){
+  document.querySelectorAll('.flow-dialog').forEach(block => paintListByRole(block));
+}
 /* ===== Init ===== */
 (async function init(){
   $("#yr").textContent = new Date().getFullYear();
@@ -535,7 +884,15 @@ renderResult();
 // Hersteller-UI initial rendern
 renderBrandList();
 renderBrandDetail();
+colorizeRolesIn(document.getElementById('flowStandard'));
 })();
+renderAllHotlinesList();   // ← baut die Karte unten
+
+// Gesprächsablauf vorbereiten
+setupFlowClicks();
+renderFlowDetail(null);   // Platzhalteranzeige
+markAllDialogBlocks();    // Mitarbeiter grau + Kunden weiß einfärben
+paintListByRole(document.getElementById('flowStandard'));
 </script>
 </body>
 </html>
