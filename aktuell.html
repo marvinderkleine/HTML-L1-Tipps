@@ -73,6 +73,33 @@
   th{background:#f9fafb;font-weight:600}
   .card h2 { margin-top:0; }
 
+  /* Abstand zwischen Tabelle und "Wie sieht die Seriennummer aus?" */
+/* Abstand über dem Seriennummern-Block (zur Tabelle) */
+#serials-look.mt-block { margin-top: 2rem; }
+#serials-look {
+  margin-top: 2rem; /* Abstand über dem Block */
+}
+
+/* Leiste mit "Hersteller wählen" im gleichen Stil/Abstand */
+#serials-look .section-title {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin: .5rem 0 1rem;
+}
+
+/* Button-Row: Wrap + Abstände wie bei Gerätegruppe */
+#serials-look .ts-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;     /* vertikal / horizontal an dein Layout anpassen */
+  margin-bottom: 1rem;
+}
+
+/* zusätzlicher Abstand von Buttons zum Ergebnis-Kasten */
+#brand-output { margin-top: 1rem; }
+
+
 /* Zebra-Streifen nur für Tabellen mit class="zebra" */
 table.zebra { background: transparent; }
 table.zebra tbody tr:nth-child(odd)  td { background: #fafafa; } /* hellgrau */
@@ -192,6 +219,22 @@ table tr:nth-child(even) td {
   border: 1px solid #eee; /* feiner Rahmen, optional */
 }
 
+
+/* --- Views sichtbar/unsichtbar (nur falls nicht vorhanden) --- */
+.view{display:none}
+.view.is-active{display:block}
+
+/* --- Arbeitsanweisungen UI --- */
+.docs-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.docs-auth{display:flex;align-items:center;gap:8px}
+#docsPw{padding:10px;border:1px solid var(--border);border-radius:10px;min-width:220px;background:#fff}
+.docs-admin{display:flex;gap:8px;margin:10px 0 16px}
+.docs-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.docs-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--card)}
+.docs-actions{display:flex;gap:8px}
+.btn-danger{background:#dc2626;color:#fff;border:none}
+.btn-danger:hover{background:#b91c1c}
+
 </style>
 </head>
 <body>
@@ -205,6 +248,7 @@ table tr:nth-child(even) td {
   <button class="tab" data-view="sn">Seriennummern</button>
   <button class="tab" data-view="htel">Hersteller-Tel.</button>
   <button class="tab" data-view="flow">Gesprächsablauf</button>
+  <button class="tab" data-view="docs">Arbeitsanweisungen</button>
 </nav>
 
 <div class="right">
@@ -249,19 +293,34 @@ table tr:nth-child(even) td {
     </section>
   </div>
 
-  <!-- VIEW: Seriennummer -->
+  <!-- VIEW Seriennummern:  -->
   <div id="view-sn" class="view">
     <section class="card">
       <h2>Wo finde ich die Seriennummer?</h2>
       <table class="zebra">
         <tr><th>Gerätetyp</th><th>Position</th></tr>
-        <tr><td>Waschmaschine / Waschtrockner</td><td>Türrahmen innen oder Türdichtung / Rückseite</td></tr>
+        <tr><td>Waschmaschine / Trockner</td><td>Türrahmen innen / Türdichtung / Rückseite</td></tr>
         <tr><td>Geschirrspüler</td><td>Türseite innen / oberer Türrahmen</td></tr>
         <tr><td>Kühlschrank / Kühl‑Gefrier‑Kombi</td><td>Innen‑Seitenwand / hinter Gemüsefach / Rückseite unten</td></tr>
         <tr><td>Herd / Backofen</td><td>Innen im Türrahmen / hinter der unteren Schublade / Rückseite</td></tr>
-        <tr><td>Trockner</td><td>Türrahmen innen / Rückseite</td></tr>
-        <tr><td>TV‑Geräte</td><td>Rückseite / Menü „Info/Über das Gerät“</td></tr>
+        <tr><td>TV‑Geräte</td><td>Rückseite / Menü „Info über das Gerät“</td></tr>
       </table>
+
+      <!-- Zusatzbereich: Wie sieht die Seriennummer aus? -->
+<section id="serials-look">
+  <h2>Wie sieht die Seriennummer aus?</h2>
+
+  <!-- Überschriftsleiste wie bei "Schritt 1" -->
+  <div class="section-title">
+    <span class="kicker">Hersteller wählen</span>
+  </div>
+
+  <!-- Button-Row exakt wie im Troubleshooter -->
+  <div id="brand-buttons" class="flex" role="tablist" aria-label="Hersteller wählen"></div>
+
+  <!-- Ergebnisbereich -->
+  <div id="brand-output" class="result" aria-live="polite" aria-atomic="true"></div>
+</section>
     </section>
   </div>
 
@@ -355,6 +414,35 @@ table tr:nth-child(even) td {
     </div>
   </section>
 </div>
+
+<!-- ===== VIEW: Arbeitsanweisungen ===== -->
+<div id="view-docs" class="view">
+  <section class="card">
+    <div class="section-title">
+      <span class="kicker">PDFs</span><span>Arbeitsanweisungen</span>
+    </div>
+
+    <!-- Leiste oben rechts: Status + Passwort/Login -->
+    <div class="docs-toolbar">
+      <span id="docsStatus" class="muted">Nur-Lesen</span>
+      <div class="docs-auth">
+        <input id="docsPw" type="password" placeholder="Passwort eingeben">
+        <button id="docsLogin" class="btn">Anmelden</button>
+        <button id="docsLogout" class="btn" style="display:none">Abmelden</button>
+      </div>
+    </div>
+
+    <!-- Admin-Bereich (nur nach Login sichtbar) -->
+    <div id="docsAdmin" class="docs-admin" style="display:none">
+      <input id="docsUpload" type="file" accept="application/pdf" multiple>
+      <button id="docsAdd" class="btn">Hochladen</button>
+    </div>
+
+    <!-- Liste für alle sichtbar -->
+    <ul id="docsList" class="docs-list"></ul>
+  </section>
+</div>
+
 </main>
 
 <footer>© <span id="yr"></span> – 2025 AQILO – LIFE IS JUST A GAME –</footer>
@@ -389,7 +477,6 @@ const DEMO = [
     {"symptom":"Milchschäumer geht nicht","causes":["Verstopft"],"tips":["Öffnung mit Pfeifenreiniger reinigen"]}
   ]},
   {"device":"Kühlschrank","items":[{"symptom":"Wasser steht im Gerät","causes":["Abtaurinne verstopft"],"tips":["Abflussöffnung reinigen"]}]},
-  {"device":"Kühlschrank-Kombi","items":[{"symptom":"kühlt nicht","causes":["Umgebungstemperatur zu kühl"],"tips":["Raumtemperatur > 15 °C sicherstellen"]}]},
   {"device":"TV","items":[
     {"symptom":"Bild farbfleckig","causes":["Clouding"],"tips":["Auf gute Belüftung achten"]},
     {"symptom":"Bild hat Farbstich","causes":["HDMI/Scart defekt","Zuspielgerät defekt"],"tips":["Anderes Kabel/Gerät/Eingang testen"]},
@@ -464,6 +551,76 @@ function renderResult(){
     ${item.info ? `<div class="muted" style="margin-top:.5rem">${item.info}</div>` : ""}
   `;
 }
+
+// Wie sieht die Seriennummer aus
+// === exakt wie der Troubleshooter ===
+const BUTTON_CLASS = 'chip';     // Pill-Buttons
+const ACTIVE_CLASS = 'sel';      // aktiver Zustand: .chip.sel (schwarz/weiß)
+
+// 12 Hersteller A–L mit Beispiel-Seriennummern und Text
+const BRANDS = [
+  { name: 'AEG/Electrolux', sn: '05133587 und 916098529/01', txt: 'Gibt SN und Prod. No. – am besten beide notieren' },
+  { name: 'Bauknecht', sn: '341949039921 und 858350803050', txt: 'Gibt S/N und 2. Nummer ist immer drüber ' },
+  { name: 'Beko', sn: '18-801727-10', txt: '2 Zahlen dann – Zahlen dann – und endet mit 2 Zahlen' },
+  { name: 'BSH: Bosch, Siemens, Neff', sn: 'E: WT 45 RVA 1/02 FD:9912 Z:200987', txt: 'Gibt E-Nummer, FD Nummer und Z-Nr.' },
+  { name: 'Candy-Hoover', sn: '3100829619460061', txt: 'Heißt N: und dann nur Zahlen ' },
+  { name: 'Gorenje', sn: '92931480 und 735141/01', txt: 'Gibt Ser.No.: und ART.No.: - am besten beide notieren' },
+  { name: 'Grundig', sn: 'G4L11S009382001J', txt: 'X' },
+  { name: 'Haier', sn: 'B70U31E1G00BAKBS0012', txt: 'Serial Number – beginnt mit mind. 2 Buchstaben und dann folgen Zahlen und Buchstaben' },
+  { name: 'LG', sn: '801PNRT01958', txt: 'Beginnt immer mit 3 Zahlen und endet mit 3 Zahlen' },
+  { name: 'Miele', sn: '17/149397598', txt: 'Nr.: - beginnt mit 2 Zahlen dann / , folgen nur noch Zahlen' },
+  { name: 'OK/Koenic', sn: '9Z29D168700101904110592', txt: 'Unter Strichcode' },
+  { name: 'Panasonic', sn: 'NV-8560402', txt: 'Beginnt immer mit 2 Buchstaben, dann folgen Zahlen' },
+  { name: 'Philips', sn: 'FZ1A1913024693', txt: 'Beginnt immer mit FZ ' },
+  { name: 'Samsung', sn: '0FT53HIN700763P', txt: 'Beginnt immer mit 0 oder B0 und endet mit einem Buchstaben ' },
+  { name: 'Sony', sn: '6000268', txt: 'Ser.No. – beginnt immer mit 60 und ist 7-stellig' },
+];
+
+function initSerialLookSection() {
+  const row = document.getElementById('brand-buttons');
+  const out = document.getElementById('brand-output');
+  if (!row || !out) return;
+
+  // Buttons bauen
+  BRANDS.forEach((b, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = BUTTON_CLASS + (i === 0 ? ' ' + ACTIVE_CLASS : '');
+    btn.textContent = b.name;
+    btn.setAttribute('role', 'tab');
+    btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+
+    btn.addEventListener('click', () => {
+      // Active-State wie im Troubleshooter: .chip.sel
+      row.querySelectorAll('button').forEach(el => {
+        el.classList.remove(ACTIVE_CLASS);
+        el.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add(ACTIVE_CLASS);
+      btn.setAttribute('aria-selected', 'true');
+      renderBrand(out, b);
+    });
+
+    row.appendChild(btn);
+  });
+
+  // erste Auswahl zeigen
+  renderBrand(out, BRANDS[0]);
+}
+
+function renderBrand(container, brand) {
+  container.innerHTML = `
+    <div class="card">
+      <p><strong>Beispiel-Seriennummer (${brand.name}):</strong> ${brand.sn}</p>
+      <p>${brand.txt}</p>
+    </div>
+  `;
+}
+
+// initialisieren, sobald DOM steht
+document.addEventListener('DOMContentLoaded', initSerialLookSection);
+
+
 /* ===== Hersteller-Suche/Anzeige ===== */
 let brandQuery = "";
 let selectedBrand = null;
@@ -893,6 +1050,174 @@ setupFlowClicks();
 renderFlowDetail(null);   // Platzhalteranzeige
 markAllDialogBlocks();    // Mitarbeiter grau + Kunden weiß einfärben
 paintListByRole(document.getElementById('flowStandard'));
+
+
+/* ===== Tabs: allgemeines Umschalten per data-view (falls du nichts eigenes hast) ===== */
+(function wireTabs(){
+  const tabs  = document.querySelectorAll('.tabs .tab');
+  const views = {
+    self: document.getElementById('view-self'),
+    sn:   document.getElementById('view-sn'),
+    htel: document.getElementById('view-htel'),
+    flow: document.getElementById('view-flow'),
+    docs: document.getElementById('view-docs'),
+  };
+  function show(viewName){
+    // Tabs-Zustand
+    tabs.forEach(t=>t.classList.toggle('is-active', t.dataset.view===viewName));
+    // Views-Zustand
+    Object.values(views).forEach(v=> v && v.classList.remove('is-active'));
+    views[viewName]?.classList.add('is-active');
+    // Hash (optional)
+    try{ history.replaceState(null,'', '#'+viewName); }catch{}
+  }
+  tabs.forEach(t=> t.addEventListener('click', ()=> show(t.dataset.view)));
+  // initial
+  const start = (location.hash||'#self').slice(1);
+  show(views[start] ? start : 'self');
+})();
+
+/* ===== Arbeitsanweisungen (lokal, Passwort "A1qilo") ===== */
+const DOCS_PASSWORD = "A1qilo";
+
+const $id = (x)=>document.getElementById(x);
+const docsStatus = $id('docsStatus');
+const docsPw     = $id('docsPw');
+const btnLogin   = $id('docsLogin');
+const btnLogout  = $id('docsLogout');
+const adminBar   = $id('docsAdmin');
+const fileInput  = $id('docsUpload');
+const btnAdd     = $id('docsAdd');
+const listEl     = $id('docsList');
+
+let isAdmin = false;
+let db; // IndexedDB
+
+// --- IndexedDB öffnen/erstellen ---
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    const req = indexedDB.open('arbeitsanweisungenDB', 1);
+    req.onupgradeneeded = (e)=>{
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains('docs')){
+        const store = db.createObjectStore('docs', { keyPath: 'id', autoIncrement: true });
+        store.createIndex('created','created');
+      }
+    };
+    req.onsuccess = ()=>resolve(req.result);
+    req.onerror   = ()=>reject(req.error);
+  });
+}
+function getAllDocs(){
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction('docs','readonly');
+    const st = tx.objectStore('docs');
+    const arr = [];
+    st.openCursor().onsuccess = (e)=>{
+      const cur = e.target.result;
+      if(cur){ arr.push(cur.value); cur.continue(); }
+      else resolve(arr.sort((a,b)=>b.created-a.created)); // neueste zuerst
+    };
+    tx.onerror = ()=>reject(tx.error);
+  });
+}
+function addDoc(name, blob){
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction('docs','readwrite');
+    const st = tx.objectStore('docs');
+    const req = st.add({ name, blob, created: Date.now() });
+    req.onsuccess = ()=>resolve(req.result);
+    req.onerror   = ()=>reject(req.error);
+  });
+}
+function deleteDoc(id){
+  return new Promise((resolve,reject)=>{
+    const tx = db.transaction('docs','readwrite');
+    const st = tx.objectStore('docs');
+    const req = st.delete(id);
+    req.onsuccess = ()=>resolve();
+    req.onerror   = ()=>reject(req.error);
+  });
+}
+
+// --- UI updaten & Liste rendern ---
+function updateDocsUI(){
+  if(!docsStatus) return; // View evtl. noch nicht im DOM
+  docsStatus.textContent = isAdmin ? "Adminmodus aktiv" : "Nur-Lesen";
+  adminBar.style.display   = isAdmin ? "flex" : "none";
+  btnLogin.style.display   = isAdmin ? "none" : "inline-block";
+  docsPw.style.display     = isAdmin ? "none" : "inline-block";
+  btnLogout.style.display  = isAdmin ? "inline-block" : "none";
+}
+async function renderDocs(){
+  if(!listEl) return;
+  const docs = await getAllDocs();
+  listEl.innerHTML = "";
+  if(!docs.length){
+    listEl.innerHTML = `<li class="muted">Noch keine Dokumente hochgeladen.</li>`;
+    return;
+  }
+  docs.forEach(doc=>{
+    const url = URL.createObjectURL(doc.blob);
+    const li = document.createElement('li');
+    li.className = 'docs-item';
+    li.innerHTML = `
+      <a href="${url}" target="_blank" rel="noopener">${doc.name}</a>
+      <div class="docs-actions">
+        <a class="btn" href="${url}" download="${doc.name}">Download</a>
+        ${isAdmin ? `<button class="btn btn-danger" data-del="${doc.id}">Löschen</button>` : ``}
+      </div>
+    `;
+    listEl.appendChild(li);
+  });
+  if(isAdmin){
+    listEl.querySelectorAll('[data-del]').forEach(btn=>{
+      btn.onclick = async ()=>{
+        if(confirm("Dieses Dokument wirklich löschen?")){
+          await deleteDoc(Number(btn.dataset.del));
+          renderDocs();
+        }
+      };
+    });
+  }
+}
+
+// --- Login/Logout/Upload Events ---
+btnLogin?.addEventListener('click', ()=>{
+  const pw = docsPw.value.trim();
+  if(pw === DOCS_PASSWORD){
+    isAdmin = true; docsPw.value = "";
+    updateDocsUI(); renderDocs();
+  }else{
+    alert("Falsches Passwort.");
+  }
+});
+btnLogout?.addEventListener('click', ()=>{
+  isAdmin = false;
+  updateDocsUI(); renderDocs();
+});
+btnAdd?.addEventListener('click', async ()=>{
+  if(!isAdmin){ alert("Nur mit Passwort möglich."); return; }
+  if(!fileInput.files?.length){ alert("Bitte PDFs auswählen."); return; }
+  for(const f of fileInput.files){
+    if(f.type !== 'application/pdf'){ alert(`${f.name} ist kein PDF.`); continue; }
+    await addDoc(f.name, f);
+  }
+  fileInput.value = ""; renderDocs();
+});
+
+// --- Start der Docs-View ---
+(async function docsInit(){
+  try{
+    db = await openDB();
+    await renderDocs();
+    updateDocsUI();
+  }catch(e){
+    console.error("IndexedDB Fehler:", e);
+    if(listEl) listEl.innerHTML = `<li class="muted">Speicherfehler. Bitte Browser prüfen.</li>`;
+  }
+})();
+
 </script>
 </body>
 </html>
