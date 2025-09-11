@@ -219,7 +219,6 @@ table tr:nth-child(even) td {
   border: 1px solid #eee; /* feiner Rahmen, optional */
 }
 
-
 /* --- Views sichtbar/unsichtbar (nur falls nicht vorhanden) --- */
 .view{display:none}
 .view.is-active{display:block}
@@ -293,7 +292,7 @@ table tr:nth-child(even) td {
     </section>
   </div>
 
-  <!-- VIEW Seriennummern:  -->
+  <!-- VIEW:  -->
   <div id="view-sn" class="view">
     <section class="card">
       <h2>Wo finde ich die Seriennummer?</h2>
@@ -442,7 +441,6 @@ table tr:nth-child(even) td {
     <ul id="docsList" class="docs-list"></ul>
   </section>
 </div>
-
 </main>
 
 <footer>© <span id="yr"></span> – 2025 AQILO – LIFE IS JUST A GAME –</footer>
@@ -1050,7 +1048,6 @@ setupFlowClicks();
 renderFlowDetail(null);   // Platzhalteranzeige
 markAllDialogBlocks();    // Mitarbeiter grau + Kunden weiß einfärben
 paintListByRole(document.getElementById('flowStandard'));
-
 
 /* ===== Tabs: allgemeines Umschalten per data-view (falls du nichts eigenes hast) ===== */
 (function wireTabs(){
